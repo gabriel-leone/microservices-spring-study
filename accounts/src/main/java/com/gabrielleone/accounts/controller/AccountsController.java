@@ -6,21 +6,25 @@ import com.gabrielleone.accounts.models.DTOs.CustomerDetailsDTO;
 import com.gabrielleone.accounts.models.DTOs.ResponseDTO;
 import com.gabrielleone.accounts.models.entities.Customer;
 import com.gabrielleone.accounts.services.IAccountService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path="/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 @AllArgsConstructor
+@Validated
 public class AccountsController {
 
     private IAccountService accountService;
 
     @PostMapping("/createAccount")
-    public ResponseEntity<ResponseDTO> createAccount(@RequestBody CustomerDTO customerDTO) {
+    public ResponseEntity<ResponseDTO> createAccount(@Valid @RequestBody CustomerDTO customerDTO) {
 
         accountService.createAccount(customerDTO);
 
@@ -30,13 +34,13 @@ public class AccountsController {
     }
 
     @GetMapping("/fetch")
-    public ResponseEntity<CustomerDetailsDTO> getAccountDetails(@RequestParam String email) {
+    public ResponseEntity<CustomerDetailsDTO> getAccountDetails(@RequestParam @Email String email) {
         var customerDetails = accountService.fetchAccount(email);
         return ResponseEntity.status(HttpStatus.OK).body(customerDetails);
     }
 
     @PutMapping("/updateAccount")
-    public ResponseEntity<ResponseDTO> updateAccount(@RequestBody CustomerDetailsDTO customerDetailsDTO) {
+    public ResponseEntity<ResponseDTO> updateAccount(@Valid @RequestBody CustomerDetailsDTO customerDetailsDTO) {
         boolean isUpdated = accountService.updateAccount(customerDetailsDTO);
         if (isUpdated) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO(AccountConstants.STATUS_200, AccountConstants.MESSAGE_200));
@@ -46,7 +50,7 @@ public class AccountsController {
     }
 
     @DeleteMapping("/deleteAccount")
-    public ResponseEntity<ResponseDTO> deleteAccount(@RequestParam String email) {
+    public ResponseEntity<ResponseDTO> deleteAccount(@RequestParam @Email String email) {
         boolean isDeleted = accountService.deleteAccount(email);
         if (isDeleted) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO(AccountConstants.STATUS_200, AccountConstants.MESSAGE_200));

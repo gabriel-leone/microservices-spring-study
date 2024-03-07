@@ -16,8 +16,4 @@ public class Account extends BaseEntity {
     private Long accountNumber;
     private String accountType;
     private String branchAddress;
-    private LocalDateTime createdAt;
-    private String createdBy;
-    private LocalDateTime updatedAt;
-    private String updatedBy;
 }
