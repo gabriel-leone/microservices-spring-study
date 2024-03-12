@@ -5,6 +5,7 @@ import com.gabrielleone.cards.models.DTOs.CardDTO;
 import com.gabrielleone.cards.models.DTOs.ResponseDTO;
 import com.gabrielleone.cards.services.ICardService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,8 +21,8 @@ public class CardController {
     private ICardService cardService;
 
     @PostMapping("/createCard")
-    public ResponseEntity<ResponseDTO> createCard(@Valid @RequestBody CardDTO cardDTO) {
-        cardService.createCard(cardDTO);
+    public ResponseEntity<ResponseDTO> createCard(@RequestParam @Email String email) {
+        cardService.createCard(email);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -29,8 +30,8 @@ public class CardController {
     }
 
     @GetMapping("/fetch")
-    public ResponseEntity<CardDTO> getCard(@RequestParam String cardNumber) {
-        var card = cardService.fetchCard(cardNumber);
+    public ResponseEntity<CardDTO> getCard(@RequestParam @Email String email) {
+        var card = cardService.fetchCard(email);
         return ResponseEntity.status(HttpStatus.OK).body(card);
     }
 
@@ -48,8 +49,8 @@ public class CardController {
     }
 
     @DeleteMapping("/deleteCard")
-    public ResponseEntity<ResponseDTO> deleteCard(@RequestParam String cardNumber) {
-        boolean isDeleted = cardService.deleteCard(cardNumber);
+    public ResponseEntity<ResponseDTO> deleteCard(@RequestParam @Email String email) {
+        boolean isDeleted = cardService.deleteCard(email);
         if (isDeleted) {
             return ResponseEntity
                     .status(HttpStatus.OK)

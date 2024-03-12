@@ -6,10 +6,9 @@ public interface ICardService {
 
     /**
      * Create a new card
-     * @param cardDTO CardDTO object
+     * @param email String email
      */
-    void createCard(CardDTO cardDTO);
-
+    void createCard(String email);
 
     CardDTO fetchCard(String cardNumber);
 

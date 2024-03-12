@@ -1,5 +1,6 @@
 package com.gabrielleone.cards.services.impl;
 
+import com.gabrielleone.cards.constants.CardConstants;
 import com.gabrielleone.cards.exceptions.CardAlreadyExistsException;
 import com.gabrielleone.cards.exceptions.ResourceNotFoundException;
 import com.gabrielleone.cards.models.DTOs.CardDTO;
@@ -10,6 +11,8 @@ import com.gabrielleone.cards.services.ICardService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Random;
+
 @Service
 @AllArgsConstructor
 public class CardServiceImpl implements ICardService {
@@ -17,47 +20,50 @@ public class CardServiceImpl implements ICardService {
     private ICardRepository cardRepository;
 
     @Override
-    public void createCard(CardDTO cardDTO) {
-        Card card = CardMapper.mapToCard(cardDTO, new Card());
-        cardRepository.findByCardNumber(cardDTO.getCardNumber()).ifPresent(c -> {
-            throw new CardAlreadyExistsException("Card with card number " + c.getCardNumber() + "already exists.");
+    public void createCard(String email) {
+        cardRepository.findByEmail(email).ifPresent(c -> {
+            throw new CardAlreadyExistsException("Card with email " + email + " already exists.");
         });
-        cardRepository.save(card);
+        cardRepository.save(createNewCard(email));
+    }
+
+    private Card createNewCard(String email) {
+        Card newCard = new Card();
+        newCard.setEmail(email);
+        long randomCardNumber = 100000000000L + new Random().nextInt(900000000);
+        newCard.setCardNumber(Long.toString(randomCardNumber));
+        newCard.setCardType(CardConstants.CREDIT_CARD);
+        newCard.setTotalLimit(CardConstants.NEW_CARD_LIMIT);
+        newCard.setAmountUsed(0);
+        newCard.setAmountAvailable(CardConstants.NEW_CARD_LIMIT);
+        return newCard;
     }
 
     @Override
-    public CardDTO fetchCard(String cardNumber) {
-        Card card = cardRepository.findByCardNumber(cardNumber).orElseThrow(
-                () -> new ResourceNotFoundException("Card", "card number", cardNumber)
+    public CardDTO fetchCard(String email) {
+        Card card = cardRepository.findByEmail(email).orElseThrow(
+                () -> new ResourceNotFoundException("Card", "email", email)
         );
         return CardMapper.mapToCardsDTO(card, new CardDTO());
     }
 
     @Override
     public boolean updateCard(CardDTO cardDTO) {
-        boolean isUpdated = false;
-        if (cardDTO != null) {
-            Card card = cardRepository.findByCardNumber(cardDTO.getCardNumber()).orElseThrow(
-                    () -> new ResourceNotFoundException("Card", "card number", cardDTO.getCardNumber())
-            );
-            CardMapper.mapToCard(cardDTO, card);
-            cardRepository.save(card);
-            isUpdated = true;
-        }
-        return isUpdated;
+        Card card = cardRepository.findByCardNumber(cardDTO.getCardNumber()).orElseThrow(
+                () -> new ResourceNotFoundException("Card", "card number", cardDTO.getCardNumber())
+        );
+        CardMapper.mapToCard(cardDTO, card);
+        cardRepository.save(card);
+        return true;
     }
 
     @Override
-    public boolean deleteCard(String cardNumber) {
-        boolean isDeleted = false;
-        if (cardNumber != null) {
-            Card card = cardRepository.findByCardNumber(cardNumber).orElseThrow(
-                    () -> new ResourceNotFoundException("Card", "card number", cardNumber)
-            );
-            cardRepository.delete(card);
-            isDeleted = true;
-        }
-        return isDeleted;
+    public boolean deleteCard(String email) {
+        Card card = cardRepository.findByEmail(email).orElseThrow(
+                () -> new ResourceNotFoundException("Card", "email", email)
+        );
+        cardRepository.delete(card);
+        return true;
     }
 
 }
