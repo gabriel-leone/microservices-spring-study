@@ -1,0 +1,19 @@
+package com.gabrielleone.loans.constants;
+
+public class LoanConstants {
+
+    private LoanConstants() {
+        // restrict instantiation
+    }
+
+    public static final String  HOME_LOAN = "Home Loan";
+    public static final float   NEW_LOAN_LIMIT = 1_00_000f;
+    public static final String  STATUS_201 = "201";
+    public static final String  MESSAGE_201 = "Loan created successfully";
+    public static final String  STATUS_200 = "200";
+    public static final String  MESSAGE_200 = "Request processed successfully";
+    public static final String  STATUS_417 = "417";
+    public static final String  MESSAGE_417_UPDATE= "Update operation failed. Please try again or contact Dev team";
+    public static final String  MESSAGE_417_DELETE= "Delete operation failed. Please try again or contact Dev team";
+
+}
