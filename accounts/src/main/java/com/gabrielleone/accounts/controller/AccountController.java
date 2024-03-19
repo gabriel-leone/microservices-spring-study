@@ -1,10 +1,7 @@
 package com.gabrielleone.accounts.controller;
 
 import com.gabrielleone.accounts.constants.AccountConstants;
-import com.gabrielleone.accounts.models.DTOs.CustomerDTO;
-import com.gabrielleone.accounts.models.DTOs.CustomerDetailsDTO;
-import com.gabrielleone.accounts.models.DTOs.ErrorResponseDTO;
-import com.gabrielleone.accounts.models.DTOs.ResponseDTO;
+import com.gabrielleone.accounts.models.DTOs.*;
 import com.gabrielleone.accounts.services.IAccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,7 +11,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +26,44 @@ import org.springframework.web.bind.annotation.*;
 )
 @RestController
 @RequestMapping(path="/api", produces = {MediaType.APPLICATION_JSON_VALUE})
-@AllArgsConstructor
 @Validated
 public class AccountController {
 
-    private IAccountService accountService;
+    private final IAccountService accountService;
+
+    public AccountController(IAccountService accountService) {
+        this.accountService = accountService;
+    }
+
+    @Value("${build.version}")
+    private String buildVersion;
+
+    @Autowired
+    private Environment environment;
+
+    @Autowired
+    private AccountContactInfoDTO accountContactInfoDTO;
+
+    @GetMapping("/build-info")
+    public ResponseEntity<String> getBuildVersion() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(buildVersion);
+    }
+
+    @GetMapping("/java-info")
+    public ResponseEntity<String> getJavaVersion() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(environment.getProperty("java.version"));
+    }
+
+    @GetMapping("/contact-info")
+    public ResponseEntity<AccountContactInfoDTO> getContactInfo() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(accountContactInfoDTO);
+    }
 
     @Operation(
             summary = "Fetch account details REST API",

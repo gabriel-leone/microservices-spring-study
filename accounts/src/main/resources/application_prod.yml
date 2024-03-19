@@ -1,0 +1,13 @@
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+
+build:
+  version: 1.0.0
+
+accounts:
+  message: "Welcome to EazyBank Accounts PROD Microservice!"
+  contactDetails:
+    email: "leonepgabriel@gmail.com"
+    name: "Gabriel Leone - Product Owner"

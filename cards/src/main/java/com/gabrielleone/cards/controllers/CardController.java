@@ -1,12 +1,16 @@
 package com.gabrielleone.cards.controllers;
 
 import com.gabrielleone.cards.constants.CardConstants;
+import com.gabrielleone.cards.models.DTOs.CardContactInfoDTO;
 import com.gabrielleone.cards.models.DTOs.CardDTO;
 import com.gabrielleone.cards.models.DTOs.ResponseDTO;
 import com.gabrielleone.cards.services.ICardService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +19,43 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
-@AllArgsConstructor
 @Validated
 public class CardController {
-    private ICardService cardService;
+    private final ICardService cardService;
+
+    public CardController(ICardService cardService) {
+        this.cardService = cardService;
+    }
+
+    @Value("${build.version}")
+    private String buildVersion;
+
+    @Autowired
+    private CardContactInfoDTO cardContactInfoDTO;
+
+    @Autowired
+    private Environment environment;
+
+    @GetMapping("/contact-info")
+    public ResponseEntity<CardContactInfoDTO> getContactInfo() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(cardContactInfoDTO);
+    }
+
+    @GetMapping("/java-info")
+    public ResponseEntity<String> getJavaVersion() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(environment.getProperty("java.version"));
+    }
+
+    @GetMapping("/build-info")
+    public ResponseEntity<String> getBuildVersion() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(buildVersion);
+    }
 
     @PostMapping("/createCard")
     public ResponseEntity<ResponseDTO> createCard(@RequestParam @Email String email) {

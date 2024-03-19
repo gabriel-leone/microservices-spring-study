@@ -1,0 +1,13 @@
+spring:
+  config:
+    activate:
+      on-profile: "qa"
+
+build:
+  version: 2.0.0
+
+cards:
+  message: "Welcome to EazyBank Cards QA Microservice!"
+  contactDetails:
+    email: "leonepgabriel@gmail.com"
+    name: "Gabriel Leone - QA Lead"
