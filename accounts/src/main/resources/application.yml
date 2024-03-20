@@ -2,33 +2,26 @@ server:
   port: 8080
 
 spring:
-  datasource:
-    url: jdbc:h2:mem:testdb
-    driverClassName: org.h2.Driver
-    username: sa
-    password: ''
-  h2:
-    console:
-      enabled: true
+  application:
+    name: "accounts"
+  profiles:
+    active: "qa"
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
     show-sql: true
   config:
-    import:
-      - "application_qa.yml"
-      - "application_prod.yml"
-#  profiles:
-#    active:
-##      - "qa"
-#      - "prod"
+    import: "optional:configserver:http://localhost:8071"
+  rabbitmq:
+    host: "localhost"
+    port: 5672
+    username: "guest"
+    password: "guest"
 
-build:
-  version: 3.0.0
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
-accounts:
-  message: "Welcome to EazyBank Accounts Microservice!"
-  contactDetails:
-    email: "leonepgabriel@gmail.com"
-    name: "Gabriel Leone - Developer"
