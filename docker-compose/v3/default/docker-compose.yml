@@ -74,7 +74,7 @@ services:
       service: network-deploy-service
 
   configserver:
-    image: "gabrielleone/configserver:v3"
+    image: "gabrielleone/configserver:v4"
     container_name: configserver-ms
     ports:
       - "8071:8071"

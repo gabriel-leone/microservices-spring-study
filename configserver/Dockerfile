@@ -1,13 +1,13 @@
-FROM openjdk:17-jdk-slim
+# Use a imagem do seu software Spring Boot
+FROM alpine:3.19
 
-MAINTAINER gabriel.leone@usp.br
+# Instale o curl
+RUN apk add --no-cache openjdk17
 
-# Install the necessary packages
-RUN apt-get update && apt-get install -y \
-    curl
+RUN apk add --no-cache curl
 
-COPY target/configserver-0.0.1-SNAPSHOT.jar configserver-0.0.1-SNAPSHOT.jar
+# Copie o arquivo para o container
+COPY target/configserver-0.0.1-SNAPSHOT.jar /configserver-0.0.1-SNAPSHOT.jar
 
-# Expose the port the app runs on
-
-ENTRYPOINT ["java","-jar","configserver-0.0.1-SNAPSHOT.jar"]
+# Execute o comando para rodar o seu software
+CMD ["java", "-jar", "/configserver-0.0.1-SNAPSHOT.jar"]
